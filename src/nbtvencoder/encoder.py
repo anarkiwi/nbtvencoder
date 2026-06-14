@@ -22,6 +22,8 @@ from typing import Union
 import cv2
 import numpy as np
 
+from .geometry import apply_scan_geometry
+
 DEFAULT_STILL_DURATION = 10.0
 """Default number of seconds a still image is held in the output signal."""
 
@@ -126,8 +128,7 @@ class NBTVEncoder:
         else:
             raise ValueError("image must be a 2D gray or 3D BGR array")
 
-        gray = cv2.flip(gray, 0)  # ImageMagick Flip()
-        gray = cv2.rotate(gray, cv2.ROTATE_90_COUNTERCLOCKWISE)  # Rotate(-90)
+        gray = apply_scan_geometry(gray)  # legacy Flip() + Rotate(-90)
         gray = cv2.resize(gray, (self.config.dots, self.config.lines), interpolation=cv2.INTER_AREA)
         return gray.astype(np.float64) / 255.0
 

@@ -41,6 +41,7 @@ dev = [
 
 [project.scripts]
 nbtvencoder = "nbtvencoder.cli:main"
+nbtv-emulate = "nbtvencoder.emulator_cli:main"
 
 [project.urls]
 Homepage = "https://github.com/anarkiwi/nbtvencoder"

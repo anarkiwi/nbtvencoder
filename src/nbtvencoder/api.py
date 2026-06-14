@@ -2,13 +2,24 @@
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Iterable
 from pathlib import Path
 
+import cv2
 import numpy as np
 
+from .emulator import DEFAULT_SCALE, NBTVDecoder
 from .encoder import DEFAULT_STILL_DURATION, NBTVConfig, NBTVEncoder, RngLike
-from .media import PathLike, is_video_path, iter_video_frames, read_image, write_wav
+from .media import (
+    PathLike,
+    is_video_path,
+    iter_video_frames,
+    read_image,
+    read_wav,
+    write_video,
+    write_wav,
+)
 
 
 def _resolve_encoder(
@@ -106,3 +117,41 @@ def encode_to_wav(
     )
     write_wav(output, samples, encoder.config.sample_rate, encoder.config.channels)
     return samples
+
+
+def emulate_wav(
+    wav_path: PathLike,
+    output: PathLike,
+    *,
+    fps: float | None = None,
+    scale: int = DEFAULT_SCALE,
+    frame: int = 0,
+    threshold: float | None = None,
+    config: NBTVConfig | None = None,
+) -> list:
+    """Decode an NBTV WAV signal and render it to a PNG still or a video.
+
+    The output format is chosen from ``output``'s extension: a recognised video
+    extension produces a video at ``fps`` (defaulting to the NBTV frame rate),
+    anything else writes a single still for frame index ``frame``.  The WAV
+    header's sample rate is authoritative and overrides ``config.sample_rate``.
+
+    Returns the list of decoded BGR frames.
+    """
+    samples, sample_rate = read_wav(wav_path)
+    base = config or NBTVConfig()
+    config = dataclasses.replace(base, sample_rate=sample_rate)
+
+    decoder = NBTVDecoder(config, threshold=threshold)
+    images = decoder.decode_images(samples, scale=scale)
+    if not images:
+        raise ValueError("no NBTV frames found in signal")
+
+    output = Path(output)
+    if is_video_path(output):
+        write_video(images, output, fps or decoder.frame_rate)
+    else:
+        index = max(0, min(frame, len(images) - 1))
+        if not cv2.imwrite(str(output), images[index]):
+            raise ValueError(f"could not write image: {output}")
+    return images
