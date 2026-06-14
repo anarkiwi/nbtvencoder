@@ -14,6 +14,28 @@ picture. This encoder is known to work with the
 This is a Python/OpenCV (`cv2`) reimplementation of the original Perl proof of
 concept, which is preserved in [`legacy/`](legacy/make-nbtv-still.pl).
 
+## Demo
+
+![NBTV alphabet demo](examples/alphabet.apng)
+
+The alphabet A–Z, run through the **encoder** into an NBTV signal and then
+decoded back by the **emulator** — what a televisor would show. Reproduce it:
+
+```bash
+pip install "nbtvencoder[demo]"
+python examples/alphabet_demo.py     # writes alphabet.wav, alphabet.mp4, alphabet.apng
+```
+
+The full pipeline is in [examples/alphabet_demo.py](examples/alphabet_demo.py)
+(or the copy/paste shell version, [examples/alphabet_demo.sh](examples/alphabet_demo.sh)):
+
+```bash
+# 1. generate the alphabet as test frames, then encode them to one NBTV signal
+nbtvencoder letters/*.png -o alphabet.wav --frames 3 --seed 1
+# 2. emulate the televisor: render the signal back to video
+nbtv-emulate alphabet.wav -o alphabet.mp4 --scale 6
+```
+
 ## Install
 
 ```bash

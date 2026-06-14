@@ -23,6 +23,10 @@ htmlcov/
 # Encoder output
 *.wav
 
+# Demo artifacts written to the repo root (the committed copy lives in examples/)
+/alphabet.mp4
+/alphabet.apng
+
 # Editors / OS
 .idea/
 .vscode/
