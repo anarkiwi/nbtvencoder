@@ -38,6 +38,9 @@ dev = [
     "pytest-cov>=4.0",
     "ruff>=0.4",
 ]
+demo = [
+    "pillow>=9.0",
+]
 
 [project.scripts]
 nbtvencoder = "nbtvencoder.cli:main"
