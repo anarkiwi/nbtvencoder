@@ -1,0 +1,58 @@
+name: Release
+
+# Publish to PyPI when a GitHub Release is published, using PyPI Trusted
+# Publishing (OpenID Connect) — no API tokens or secrets are stored.
+# One-time setup is documented in RELEASING.md.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distributions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Verify the release tag matches the package version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(grep -oE '"[^"]+"' src/nbtvencoder/_version.py | tr -d '"')"
+          echo "release tag: $tag / package version: $version"
+          if [ "$tag" != "$version" ]; then
+            echo "::error::release tag '${GITHUB_REF_NAME}' does not match package version '${version}'"
+            exit 1
+          fi
+      - run: python -m pip install --upgrade build
+      - run: python -m build
+      - name: Check the distributions
+        run: |
+          python -m pip install --upgrade twine
+          python -m twine check dist/*
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    # The trusted publisher on PyPI is bound to this environment name.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/nbtvencoder
+    permissions:
+      id-token: write # mint the OIDC token used for Trusted Publishing
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
