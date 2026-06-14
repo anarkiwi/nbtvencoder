@@ -168,6 +168,13 @@ ruff format .          # format
 CI runs the linter, the test suite across Python 3.9–3.13, and a package build
 on every push and pull request. Dependencies are kept current by Dependabot.
 
+## Releasing
+
+Publishing a GitHub Release builds and uploads the package to PyPI via
+[PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/) (OIDC — no
+stored tokens). See [RELEASING.md](RELEASING.md) for the one-time trusted
+publisher setup and the per-release steps.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
