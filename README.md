@@ -110,10 +110,10 @@ emulate_wav("nbtv.wav", "out.mp4")
 
 # Or work with the samples directly (a NumPy int16 array).
 encoder = NBTVEncoder(seed=1)
-samples = encoder.encode_still(cv2_image, duration=10.0)   # still image
-samples = encoder.encode_frames(frame_iterable)            # any frame source
+samples = encoder.encode_still(cv2_image, duration=10.0)  # still image
+samples = encoder.encode_frames(frame_iterable)  # any frame source
 
-grids = NBTVDecoder().decode_grids(samples)                # intensity frames back out
+grids = NBTVDecoder().decode_grids(samples)  # intensity frames back out
 ```
 
 Key entry points:
