@@ -5,12 +5,11 @@ from __future__ import annotations
 import wave
 from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path
-from typing import Union
 
 import cv2
 import numpy as np
 
-PathLike = Union[str, Path]
+PathLike = str | Path
 
 IMAGE_EXTENSIONS = {
     ".png",
