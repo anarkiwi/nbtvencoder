@@ -70,7 +70,7 @@ def test_decode_multiframe_order_and_levels():
     assert len(grids) == 3
     means = [float(g.mean()) for g in grids]
     assert means[0] < means[1] < means[2]
-    for v, mean in zip(levels, means):
+    for v, mean in zip(levels, means, strict=False):
         assert mean == pytest.approx(v / 255, abs=0.05)
 
 
