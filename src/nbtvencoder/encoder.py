@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Union
 
 import cv2
 import numpy as np
@@ -27,7 +26,7 @@ from .geometry import apply_scan_geometry
 DEFAULT_STILL_DURATION = 10.0
 """Default number of seconds a still image is held in the output signal."""
 
-RngLike = Union[None, int, np.random.Generator]
+RngLike = None | int | np.random.Generator
 
 
 def make_rng(rng: RngLike = None, default_seed: int | None = None) -> np.random.Generator:
